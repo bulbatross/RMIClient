@@ -40,6 +40,7 @@ public class Client extends UnicastRemoteObject implements Notifiable
 	       /* Register for callbacks at the auction server.
 	        */
             //server.registerClient(client);
+            actionHandler.registerForNotification(client);
 
             client.runClient();
         }
@@ -69,11 +70,11 @@ public class Client extends UnicastRemoteObject implements Notifiable
                         else {
                             if(userInput.equals("/help"))
                                 System.out.println(actionHandler.getHelp());
-                            //server.putMsgFromClient(userInput); //this server method should be synchronized
-                            else
-                                System.out.println(actionHandler.sendMessage());
+                            else {
+                                actionHandler.sendMessage(userInput);
+                            }
 
-                            System.out.print("input: ");
+                            //System.out.print("input: ");
                         }
 
 
@@ -90,12 +91,15 @@ public class Client extends UnicastRemoteObject implements Notifiable
         // Important: Deregister for notifiation from server!
         //server.deRegisterClient(this);
         // Terminate the thread associated with rmi calls
+        actionHandler.deRegisterForNotification(this);
         System.exit(0);
     }
     /* This method is used by the server to "call back"
      * to update clients. */
     @Override
     public void notifyNewMessage(String msg) throws RemoteException {
+        System.out.println();
         System.out.println("echo: " + msg);
+        System.out.print("input: ");
     }
 }

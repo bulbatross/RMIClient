@@ -32,14 +32,13 @@ public class Client extends UnicastRemoteObject implements Notifiable
         //}
 
         try {
-            //String url = "rmi://" + args[0] + "/ActionHandler"; //RunServer should implement ActionHandler
+
             actionHandler =
                     (ActionHandler) Naming.lookup("rmi://127.0.0.1/ActonHandler");
             Client client = new Client(actionHandler);
 
-	       /* Register for callbacks at the auction server.
+	       /* Register for callbacks at the ActionHandler.
 	        */
-            //server.registerClient(client);
             actionHandler.registerForNotification(client);
 
             client.runClient();
@@ -74,7 +73,7 @@ public class Client extends UnicastRemoteObject implements Notifiable
                                 actionHandler.sendMessage(userInput);
                             }
 
-                            //System.out.print("input: ");
+
                         }
 
 
@@ -89,13 +88,11 @@ public class Client extends UnicastRemoteObject implements Notifiable
 
         System.out.println("Exiting...");
         // Important: Deregister for notifiation from server!
-        //server.deRegisterClient(this);
-        // Terminate the thread associated with rmi calls
         actionHandler.deRegisterForNotification(this);
         System.exit(0);
     }
-    /* This method is used by the server to "call back"
-     * to update clients. */
+    /* This method is used by the server to notify a new
+     * message to other clients. */
     @Override
     public void notifyNewMessage(String msg) throws RemoteException {
         System.out.println();
